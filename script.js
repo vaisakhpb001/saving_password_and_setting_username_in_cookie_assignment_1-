@@ -1,23 +1,39 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // Function to get the value of a cookie by name
-  function getCookie(name) {
-    let cookieArray = document.cookie.split('; ');
-    let cookie = cookieArray.find((row) => row.startsWith(name + '='));
-    return cookie ? cookie.split('=')[1] : null;
-  }
+// ✅ Step 1: Function to get a cookie by name
+function getCookie(name) {
+    let cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        let [key, value] = cookie.trim().split('=');
+        if (key === name) {
+            return value;
+        }
+    }
+    return null;
+}
 
-  // Function to set a cookie
-  function setCookie(name, value, daysToExpire) {
-    let date = new Date();
-    date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000);
-    document.cookie =
-      name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
-  }
+// ✅ Step 2: Initialize the count cookie if it doesn't exist
+function initializeCookie() {
+    let count = getCookie('count');
+    if (!count) {
+        document.cookie = 'count=0; path=/';
+    }
+}
 
-  // 1. Get the value of the 'count' cookie
-  // 2. If the cookie exists, increment the value and update the cookie
-  // 3. If the cookie does not exist, create it and set the value to 1
-  // 4. Display the count on the webpage
+// ✅ Step 3: Display the current count on the webpage
+function displayCount() {
+    let count = getCookie('count') || 0;
+    document.getElementById('counter').innerText = `Count: ${count}`;
+}
 
-  // your code here
-});
+// ✅ Step 4: Increment the count each time the page loads
+function incrementCount() {
+    let count = parseInt(getCookie('count')) || 0;
+    count += 1;
+    document.cookie = `count=${count}; path=/`;
+    displayCount();
+}
+
+// ✅ Step 5: Run all functions on page load
+window.onload = function() {
+    initializeCookie();
+    incrementCount(); // Automatically increase count on each load
+};
